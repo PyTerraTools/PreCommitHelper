@@ -35,7 +35,11 @@ jobs:
         with:
           script: |
             const { owner, repo } = context.repo
-            const tagName = `release-${Date.now()}`
+            const { data: { total_count: totalCommits } } = await github.rest.repos.getCommitActivityStats({
+              owner,
+              repo,
+            })
+            const tagName = `v1.0.${totalCommits}`
             const { data: newRelease } = await github.rest.repos.createRelease({
               owner,
               repo,
