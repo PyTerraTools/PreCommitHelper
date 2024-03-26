@@ -1,6 +1,7 @@
 name: CI/CD Pipeline
 
-on: push
+on:
+  push
   # pull_request:
   #   types: [closed]
   #   branches: [master]
@@ -11,40 +12,40 @@ jobs:
     # if: github.event.pull_request.merged == true
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4.1.2
+      - name: Checkout code
+        uses: actions/checkout@v4.1.2
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.12'
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
 
-    - name: Install pre-commit
-      run: pip install pre-commit
+      - name: Install pre-commit
+        run: pip install pre-commit
 
-    - name: Run pre-commit
-      run: pre-commit run --all-files
+      - name: Run pre-commit
+        run: pre-commit run --all-files
 
-    - name: Check shell script with bash -n
-      run: bash -n pre-commit-helper.sh
+      - name: Check shell script with bash -n
+        run: bash -n pre-commit-helper.sh
 
-    - name: Create Release Tag
-      id: create_tag
-      uses: actions/github-script@v7.0.1
-      with:
-        script: |
-          const { owner, repo } = context.repo
-          const tagName = `release-${Date.now()}`
-          const { data: newRelease } = await github.rest.repos.createRelease({
-            owner,
-            repo,
-            tag_name: tagName,
-            name: tagName,
-            body: `New release ${tagName}`,
-            draft: false,
-            prerelease: false,
-          })
-          return newRelease.tag_name
+      - name: Create Release Tag
+        id: create_tag
+        uses: actions/github-script@v7.0.1
+        with:
+          script: |
+            const { owner, repo } = context.repo
+            const tagName = `release-${Date.now()}`
+            const { data: newRelease } = await github.rest.repos.createRelease({
+              owner,
+              repo,
+              tag_name: tagName,
+              name: tagName,
+              body: `New release ${tagName}`,
+              draft: false,
+              prerelease: false,
+            })
+            return newRelease.tag_name
 
-    - name: Output new tag
-      run: echo "New release tag ${{ steps.create_tag.outputs.result }}"
+      - name: Output new tag
+        run: echo "New release tag ${{ steps.create_tag.outputs.result }}"
