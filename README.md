@@ -8,7 +8,7 @@ PreCommitHelper is a bash script designed to automate the setup of pre-commit ho
 
 Clone the repository to your local machine:
 
-```git clone https://github.com/yourusername/yourrepository.git```
+```git clone https://github.com/PyTerraTools/PreCommitHelper.git```
 
 Navigate to the directory containing the script:
 
