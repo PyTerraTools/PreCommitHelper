@@ -15,7 +15,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4.1.2
 
-      - name: Set up Python
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -29,28 +29,11 @@ jobs:
       - name: Check shell script with bash -n
         run: bash -n pre-commit-helper.sh
 
-      - name: Create Release Tag
-        id: create_tag
-        uses: actions/github-script@v7.0.1
-        with:
-          script: |
-            const { owner, repo } = context.repo
-            const { data: { total_count: totalCommits } } = await github.rest.repos.getCommitActivityStats({
-              owner,
-              repo,
-            })
-            const tagName = `v1.0.${totalCommits}`
-            const { data: newRelease } = await github.rest.repos.createRelease({
-              owner,
-              repo,
-              tag_name: tagName,
-              name: tagName,
-              body: `New release ${tagName}`,
-              draft: false,
-              prerelease: false,
-            })
-            return newRelease.tag_name
-          github-token: ${{ secrets.CREATE_TAGS_PERSONAL_ACCESS_TOKEN }}
+      - name: Bump version and push tag
+        uses: anothrNick/github-tag-action@1.67.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          WITH_V: true
 
       - name: Output new tag
-        run: echo "New release tag ${{ steps.create_tag.outputs.result }}"
+        run: echo "New release tag ${{ steps.create_tag.outputs.new_tag }}"
