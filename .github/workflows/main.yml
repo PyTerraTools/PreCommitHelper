@@ -46,7 +46,7 @@ jobs:
               prerelease: false,
             })
             return newRelease.tag_name
-          token: ${{ secrets.CREATE_TAGS_PERSONAL_ACCESS_TOKEN }}
+          github-token: ${{ secrets.CREATE_TAGS_PERSONAL_ACCESS_TOKEN }}
 
       - name: Output new tag
         run: echo "New release tag ${{ steps.create_tag.outputs.result }}"
