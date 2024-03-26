@@ -51,7 +51,7 @@ create_precommit_config() {
     default_stages:
       - pre-commit
       - pre-push
-    fail_fast: false # Stop running checks after first failure
+    fail_fast: true # Stop running checks after first failure
     repos:
       - repo: https://github.com/PyCQA/isort.git
         rev: $ISORT_VERSION
