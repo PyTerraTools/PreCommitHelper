@@ -1,0 +1,40 @@
+name: CI/CD Pipeline
+
+on:
+  push
+  # pull_request:
+  #   types: [closed]
+  #   branches: [master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    # if: github.event.pull_request.merged == true
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4.1.2
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install pre-commit
+        run: pip install pre-commit
+
+      - name: Run pre-commit
+        run: pre-commit run --all-files
+
+      - name: Check shell script with bash -n
+        run: bash -n pre-commit-helper.sh
+
+      - name: Bump version and push tag
+        uses: anothrNick/github-tag-action@1.67.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          WITH_V: true
+          DRY_RUN: ${{ (github.event.pull_request.merged == true || github.ref == 'refs/heads/master') && 'false' || 'true' }}
+
+      - name: Output new tag
+        run: echo "New release tag ${{ steps.create_tag.outputs.new_tag }}"
